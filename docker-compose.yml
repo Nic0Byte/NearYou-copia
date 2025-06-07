@@ -1,7 +1,6 @@
 # File principale docker-compose.yml nella root del progetto
 version: "3.9"
 
-
 x-service-defaults: &service-defaults
   restart: unless-stopped
   env_file:
@@ -22,14 +21,44 @@ services:
       - dashboard-user
       - grafana
       - producer
-      - consumer
+      - faust-processor
       - prometheus
       - loki
       - promtail
       - node-exporter
       - cadvisor
 
+  # Faust Stream Processor - NUOVO servizio nella root
+  faust-processor:
+    <<: *service-defaults
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.faust
+    volumes:
+      - .:/workspace:cached
+      - ./certs:/workspace/certs:ro
+      - faust_data:/workspace/faust-data
+    environment:
+      - LOG_LEVEL=INFO
+      - FAUST_WEB_HOST=0.0.0.0
+      - FAUST_WEB_PORT=8002
+      - FAUST_DATADIR=/workspace/faust-data
+    ports:
+      - "8002:8002"
+    depends_on:
+      - kafka
+      - clickhouse
+      - postgres
+      - message-generator
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 include:
   - ./deployment/docker/docker-compose.yml
-  - ./monitoring/docker-compose.monitoring.yml 
+  - ./monitoring/docker-compose.monitoring.yml
+
+volumes:
+  faust_data:  # Volume per RocksDB state store

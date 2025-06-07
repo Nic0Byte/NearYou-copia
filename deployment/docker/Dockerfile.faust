@@ -1,0 +1,45 @@
+FROM python:3.10-slim
+
+# Installa dipendenze di sistema necessarie
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    librocksdb-dev \
+    netcat-openbsd \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+# Copia requirements prima per cache layer
+COPY requirements.txt .
+COPY requirements/ requirements/
+
+# Installa dipendenze Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Verifica se esiste requirements/faust.txt, altrimenti installa direttamente
+RUN if [ -f requirements/faust.txt ]; then \
+        pip install --no-cache-dir -r requirements/faust.txt; \
+    else \
+        pip install --no-cache-dir "faust-streaming[rocksdb]==0.10.3" rocksdb==0.8.0 uvloop==0.18.0 aiodns==3.1.1; \
+    fi
+
+# Copia tutto il codice
+COPY . /workspace
+
+# Copia e rendi eseguibile lo script di avvio
+COPY deployment/scripts/start_faust.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/start_faust.sh
+
+# Espone workspace nel PYTHONPATH
+ENV PYTHONPATH=/workspace/src:/workspace
+
+# Crea directory per RocksDB
+RUN mkdir -p /workspace/faust-data
+
+# Porta per web interface
+EXPOSE 8002
+
+# Comando per avviare Faust
+CMD ["/usr/local/bin/start_faust.sh"]
