@@ -1,8 +1,5 @@
-# Faust stream processing
-faust-streaming[rocksdb]==0.10.3
 
-# RocksDB per state storage (usa python-rocksdb invece di rocksdb)
-python-rocksdb==0.8.0
+faust-streaming==0.10.3
 
 # Performance dependencies
 uvloop==0.18.0
@@ -12,3 +9,6 @@ aiodns==3.1.1
 aiofiles==23.2.1
 asyncpg==0.28.0
 httpx==0.24.1
+
+# Logging strutturato
+structlog==23.1.0

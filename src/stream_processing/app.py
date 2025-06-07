@@ -5,7 +5,6 @@ import os
 import logging
 import ssl
 from faust import App
-from faust.types import StreamT
 
 from src.configg import (
     KAFKA_BROKER, SSL_CAFILE, SSL_CERTFILE, SSL_KEYFILE
@@ -17,7 +16,7 @@ logger = logging.getLogger(__name__)
 ssl_context = ssl.create_default_context(cafile=SSL_CAFILE)
 ssl_context.load_cert_chain(certfile=SSL_CERTFILE, keyfile=SSL_KEYFILE)
 
-# Configurazione Faust app
+# Configurazione Faust app (usa memory store)
 app = App(
     'nearyou-stream-processor',
     broker=f'kafka+ssl://{KAFKA_BROKER}',
@@ -26,6 +25,9 @@ app = App(
     web_host='0.0.0.0',
     web_port=8002,
     
+    # Usa memory store (nessuna persistenza ma molto più semplice)
+    store='memory://',
+    
     # Configurazioni per produzione
     stream_buffer_maxsize=1000,
     stream_wait_empty=False,
@@ -33,9 +35,6 @@ app = App(
     # Configurazioni per consumer
     consumer_max_fetch_size=1048576,  # 1MB
     consumer_auto_offset_reset='latest',
-    
-    # Store per tables (state management)
-    store='rocksdb://',
     
     # Logging
     logging_config={
@@ -65,4 +64,4 @@ app = App(
 # Import agents dopo la creazione dell'app per evitare circular imports
 from .agents import location_agent, notification_agent, analytics_agent
 
-logger.info("Faust app configurata per NearYou stream processing")
+logger.info("Faust app configurata per NearYou stream processing (memory store)")

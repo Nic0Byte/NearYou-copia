@@ -37,6 +37,6 @@ prometheus-client==0.17.1
 prometheus-fastapi-instrumentator==6.1.0
 
 
-faust-streaming[rocksdb]==0.10.3
-python-rocksdb
+faust-streaming==0.10.3
 uvloop==0.18.0
+structlog==23.1.0

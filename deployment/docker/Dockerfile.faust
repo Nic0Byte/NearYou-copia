@@ -1,12 +1,8 @@
 FROM python:3.10-slim
 
-# Installa dipendenze di sistema necessarie per RocksDB
+# Installa solo dipendenze essenziali
 RUN apt-get update && apt-get install -y \
     gcc \
-    g++ \
-    librocksdb-dev \
-    libsnappy-dev \
-    libgflags-dev \
     netcat-openbsd \
     curl \
     && rm -rf /var/lib/apt/lists/*
@@ -17,7 +13,7 @@ WORKDIR /workspace
 COPY requirements.txt .
 COPY requirements/ requirements/
 
-# Installa dipendenze base prima
+# Installa dipendenze base
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Installa dipendenze Faust
@@ -33,7 +29,7 @@ RUN chmod +x /usr/local/bin/start_faust.sh
 # Espone workspace nel PYTHONPATH
 ENV PYTHONPATH=/workspace/src:/workspace
 
-# Crea directory per RocksDB
+# Crea directory per store
 RUN mkdir -p /workspace/faust-data
 
 # Porta per web interface
