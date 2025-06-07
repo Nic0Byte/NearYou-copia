@@ -38,5 +38,5 @@ prometheus-fastapi-instrumentator==6.1.0
 
 
 faust-streaming[rocksdb]==0.10.3
-python-rocksdb==0.8.0
+python-rocksdb
 uvloop==0.18.0
