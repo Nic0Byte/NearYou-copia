@@ -35,3 +35,8 @@ redis==4.5.5    #sistema cache per llm
 
 prometheus-client==0.17.1
 prometheus-fastapi-instrumentator==6.1.0
+
+
+faust-streaming[rocksdb]==0.10.3
+python-rocksdb==0.8.0
+uvloop==0.18.0

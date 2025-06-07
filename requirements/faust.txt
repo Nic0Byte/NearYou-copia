@@ -1,17 +1,14 @@
 # Faust stream processing
 faust-streaming[rocksdb]==0.10.3
 
-# Dipendenze aggiuntive per Faust
-rocksdb==0.8.0
+# RocksDB per state storage (usa python-rocksdb invece di rocksdb)
+python-rocksdb==0.8.0
+
+# Performance dependencies
 uvloop==0.18.0
-aiofiles==23.2.1
 aiodns==3.1.1
 
-# Per integrazione con ClickHouse
-clickhouse-driver==0.2.5
-
-# Per integrazione PostgreSQL
+# Per integrazione async
+aiofiles==23.2.1
 asyncpg==0.28.0
-
-# HTTP client per message generator
 httpx==0.24.1
